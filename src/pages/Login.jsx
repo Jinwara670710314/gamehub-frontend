@@ -1,15 +1,80 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    alert("กำลังรอเชื่อมต่อระบบ Login");
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const responseText = await response.text();
+
+      let result;
+
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        result = {
+          message: responseText,
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
+        );
+      }
+
+      if (!result.token) {
+        throw new Error("ไม่พบ Token จากระบบ กรุณาลองใหม่");
+      }
+
+      // บันทึก Token สำหรับเรียก API ที่ต้องเข้าสู่ระบบ
+      localStorage.setItem("token", result.token);
+
+      // บันทึกข้อมูลผู้ใช้
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: result.id,
+          username: result.username,
+          email: result.email,
+          role: result.role,
+        })
+      );
+
+      // เข้าสู่ระบบสำเร็จ กลับไปหน้าแรก
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.message || "ไม่สามารถเชื่อมต่อระบบได้");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,7 +99,10 @@ function Login() {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
               required
             />
 
@@ -43,11 +111,29 @@ function Login() {
               type="password"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
               required
             />
 
-            <button type="submit">Sign In</button>
+            {error && (
+              <p
+                style={{
+                  color: "#ef4444",
+                  fontSize: "13px",
+                  marginTop: "8px",
+                  marginBottom: "8px",
+                }}
+              >
+                {error}
+              </p>
+            )}
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing In..." : "Sign In"}
+            </button>
           </form>
 
           <p className="auth-footer">

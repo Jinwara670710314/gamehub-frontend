@@ -1,8 +1,29 @@
 
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import games from "../data/games";
+import { getGames } from "../api/gameApi";
 
 function Home() {
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const data = await getGames();
+        setGames(data);
+      } catch (err) {
+        console.error("Load games error:", err);
+        setError("ไม่สามารถโหลดข้อมูลเกมได้");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGames();
+  }, []);
+
   return (
     <div className="home">
       <section className="hero">
@@ -36,30 +57,42 @@ function Home() {
           <p>ค้นพบเกมที่น่าสนใจ</p>
         </div>
 
-        <div className="feature-grid">
-          {games.map((game) => (
-            <Link
-              to={`/games/${game.id}`}
-              className="feature-card"
-              key={game.id}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <img
-                src={game.image}
-                alt={game.name}
-                className="game-image"
-              />
+        {loading && <p>กำลังโหลดข้อมูลเกม...</p>}
 
-              <div className="game-info">
-                <h3>{game.name}</h3>
-                <p>{game.genre} · {game.year}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {error && <p>{error}</p>}
+
+        {!loading && !error && (
+          <div className="feature-grid">
+            {games.map((game) => (
+              <Link
+                to={`/games/${game.id}`}
+                className="feature-card"
+                key={game.id}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                <img
+                  src={game.image}
+                  alt={game.name}
+                  className="game-image"
+                />
+
+                <div className="game-info">
+                  <h3>{game.name}</h3>
+                  <p>
+                    {game.genre} · {game.year}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && games.length === 0 && (
+          <p>ยังไม่มีข้อมูลเกม</p>
+        )}
       </section>
     </div>
   );

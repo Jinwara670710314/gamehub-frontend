@@ -1,22 +1,69 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (password !== confirmPassword) {
-      alert("รหัสผ่านไม่ตรงกัน");
+    if (password.length < 8) {
+      setError("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
       return;
     }
 
-    alert("สมัครสมาชิกเรียบร้อย (รอเชื่อมต่อ Backend)");
+    if (password !== confirmPassword) {
+      setError("รหัสผ่านไม่ตรงกัน");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      const responseText = await response.text();
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        result = { message: responseText };
+      }
+
+      if (!response.ok) {
+        throw new Error(result.message || "สมัครสมาชิกไม่สำเร็จ");
+      }
+
+      navigate("/login");
+    } catch (error) {
+      console.error("Register error:", error);
+      setError(error.message || "ไม่สามารถเชื่อมต่อระบบได้");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,6 +76,7 @@ function Register() {
 
           <span className="auth-label">CREATE YOUR ACCOUNT</span>
           <h1>Join GameHub</h1>
+
           <p className="auth-description">
             Create your account and start exploring your next adventure.
           </p>
@@ -57,7 +105,10 @@ function Register() {
               type="password"
               placeholder="Create a password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
               required
             />
 
@@ -66,11 +117,29 @@ function Register() {
               type="password"
               placeholder="Confirm your password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError("");
+              }}
               required
             />
 
-            <button type="submit">Create Account</button>
+            {error && (
+              <p
+                style={{
+                  color: "#ef4444",
+                  fontSize: "13px",
+                  marginTop: "8px",
+                  marginBottom: "8px",
+                }}
+              >
+                {error}
+              </p>
+            )}
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Creating Account..." : "Create Account"}
+            </button>
           </form>
 
           <p className="auth-footer">
@@ -98,11 +167,13 @@ function Register() {
 
         <div className="register-image-text">
           <span>YOUR NEXT ADVENTURE STARTS HERE</span>
+
           <h2>
             ENTER THE
             <br />
             WORLD OF GAMING.
           </h2>
+
           <p>
             Discover new worlds. Find your favorite games.
             Build your own collection.

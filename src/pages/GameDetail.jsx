@@ -1,12 +1,16 @@
 
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
-import games from "../data/games";
+import { useState, useEffect } from "react";
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function GameDetail() {
   const { id } = useParams();
 
-  const game = games.find((item) => item.id === Number(id));
+  const [game, setGame] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [isFavorite, setIsFavorite] = useState(() => {
     const savedGames = JSON.parse(
@@ -16,7 +20,49 @@ function GameDetail() {
     return savedGames.includes(Number(id));
   });
 
+  useEffect(() => {
+    async function loadGame() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(
+          `${API_BASE_URL}/api/games/${id}/detail`
+        );
+
+        if (!response.ok) {
+          throw new Error("ไม่สามารถโหลดข้อมูลเกมได้");
+        }
+
+        const result = await response.json();
+
+        if (!result.data?.game) {
+          throw new Error("ไม่พบข้อมูลเกม");
+        }
+
+        setGame(result.data.game);
+      } catch (err) {
+        console.error("Load game error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGame();
+  }, [id]);
+
+  useEffect(() => {
+    const savedGames = JSON.parse(
+      localStorage.getItem("gamehubWishlist") || "[]"
+    );
+
+    setIsFavorite(savedGames.includes(Number(id)));
+  }, [id]);
+
   function toggleWishlist() {
+    if (!game) return;
+
     const savedGames = JSON.parse(
       localStorage.getItem("gamehubWishlist") || "[]"
     );
@@ -39,10 +85,18 @@ function GameDetail() {
     );
   }
 
-  if (!game) {
+  if (loading) {
     return (
       <main className="detail-page">
-        <h2>ไม่พบข้อมูลเกม</h2>
+        <p>กำลังโหลดข้อมูลเกม...</p>
+      </main>
+    );
+  }
+
+  if (error || !game) {
+    return (
+      <main className="detail-page">
+        <h2>{error || "ไม่พบข้อมูลเกม"}</h2>
         <Link to="/games" className="detail-back">
           ← กลับไปหน้าเกมทั้งหมด
         </Link>
@@ -87,7 +141,9 @@ function GameDetail() {
             className="wishlist-button"
             onClick={toggleWishlist}
           >
-            {isFavorite ? "♥ อยู่ใน Wishlist แล้ว" : "♡ เพิ่มใน Wishlist"}
+            {isFavorite
+              ? "♥ อยู่ใน Wishlist แล้ว"
+              : "♡ เพิ่มใน Wishlist"}
           </button>
 
           <Link to="/games" className="detail-button">

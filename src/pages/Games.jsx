@@ -1,12 +1,42 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import games from "../data/games";
+import { getGames } from "../api/gameApi";
 
 function Games() {
+  const [games, setGames] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("ทั้งหมด");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const data = await getGames(100);
+        setGames(data);
+      } catch (err) {
+        console.error("Load games error:", err);
+        setError("ไม่สามารถโหลดข้อมูลเกมได้");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGames();
+  }, []);
+
+  // สร้างตัวเลือกประเภทเกมจากข้อมูลจริงใน Backend
+  const genres = [
+    "ทั้งหมด",
+    ...new Set(
+      games
+        .map((game) => game.genre)
+        .filter(Boolean)
+    ),
+  ];
+
+  // ค้นหาและกรองประเภทเกม
   const filteredGames = games.filter((game) => {
     const matchName = game.name
       .toLowerCase()
@@ -42,46 +72,55 @@ function Games() {
           value={selectedGenre}
           onChange={(event) => setSelectedGenre(event.target.value)}
         >
-          <option value="ทั้งหมด">ทุกประเภท</option>
-          <option value="Action">Action</option>
-          <option value="Action RPG">Action RPG</option>
-          <option value="Adventure">Adventure</option>
+          {genres.map((genre) => (
+            <option value={genre} key={genre}>
+              {genre === "ทั้งหมด" ? "ทุกประเภท" : genre}
+            </option>
+          ))}
         </select>
       </div>
 
-      <p className="games-count">
-        พบเกมทั้งหมด {filteredGames.length} เกม
-      </p>
+      {loading && <p>กำลังโหลดข้อมูลเกม...</p>}
 
-      <div className="feature-grid">
-        {filteredGames.map((game) => (
-          <Link
-            to={`/games/${game.id}`}
-            className="feature-card"
-            key={game.id}
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            <img
-              src={game.image}
-              alt={game.name}
-              className="game-image"
-            />
+      {error && <p className="no-games">{error}</p>}
 
-            <div className="game-info">
-              <h3>{game.name}</h3>
-              <p>{game.genre} · {game.year}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {!loading && !error && (
+        <>
+          <p className="games-count">
+            พบเกมทั้งหมด {filteredGames.length} เกม
+          </p>
 
-      {filteredGames.length === 0 && (
-        <p className="no-games">
-          ไม่พบเกมที่ค้นหา ลองค้นหาด้วยคำอื่น
-        </p>
+          <div className="feature-grid">
+            {filteredGames.map((game) => (
+              <Link
+                to={`/games/${game.id}`}
+                className="feature-card"
+                key={game.id}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                <img
+                  src={game.image}
+                  alt={game.name}
+                  className="game-image"
+                />
+
+                <div className="game-info">
+                  <h3>{game.name}</h3>
+                  <p>{game.genre} · {game.year}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {filteredGames.length === 0 && (
+            <p className="no-games">
+              ไม่พบเกมที่ค้นหา ลองค้นหาด้วยคำอื่น
+            </p>
+          )}
+        </>
       )}
     </main>
   );
