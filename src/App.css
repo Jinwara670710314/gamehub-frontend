@@ -2601,3 +2601,568 @@ a {
   }
 }
 
+
+
+/* =================================
+   GAMEHUB - GAME RATING & REVIEWS
+   ================================= */
+
+.game-review-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 28px auto 0;
+  padding: 30px;
+  background: #121827;
+  border: 1px solid #252e42;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px #00000024;
+}
+
+.game-rating-summary {
+  margin-top: 50px;
+}
+
+.game-review-heading {
+  margin-bottom: 24px;
+}
+
+.game-review-heading .detail-label {
+  margin-bottom: 9px;
+}
+
+.game-review-heading h2 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: 23px;
+}
+
+.game-review-heading > p {
+  color: #aab3ca;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.rating-summary-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 22px 24px;
+  background: #171f31;
+  border: 1px solid #30394f;
+  border-radius: 13px;
+}
+
+.rating-summary-score {
+  min-width: 0;
+}
+
+.rating-summary-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #aab3ca;
+  font-size: 14px;
+}
+
+.rating-average-number {
+  margin: 0 0 5px;
+  color: #fff;
+  font-size: 38px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.review-stars {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+
+.review-stars-filled {
+  color: #f5b301;
+}
+
+.review-stars-empty {
+  color: #596174;
+}
+
+.rating-average-stars {
+  margin: 5px 0 8px;
+  font-size: 21px;
+}
+
+.rating-summary-count {
+  margin: 0;
+  color: #aab3ca;
+  font-size: 13px;
+}
+
+.rating-summary-note {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  max-width: 310px;
+  padding-left: 22px;
+  border-left: 1px solid #30394f;
+}
+
+.rating-summary-note-icon {
+  color: #a78bfa;
+  font-size: 27px;
+}
+
+.rating-summary-note p {
+  color: #aab3ca;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.game-review-form-section form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.review-form-label {
+  display: block;
+  margin: 4px 0 10px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.review-star-picker {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 22px;
+}
+
+.review-star-button {
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: #596174;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.18s, transform 0.18s;
+}
+
+.review-star-button:hover,
+.review-star-button.is-selected {
+  color: #f5b301;
+}
+
+.review-star-button:hover {
+  transform: scale(1.12);
+}
+
+.review-textarea {
+  display: block;
+  width: 100%;
+  min-height: 135px;
+  box-sizing: border-box;
+  padding: 15px 16px;
+  border: 1px solid #30394f;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  background: #0f1626;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.review-textarea::placeholder {
+  color: #77839b;
+}
+
+.review-textarea:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px #8b5cf622;
+}
+
+.review-character-count {
+  align-self: flex-end;
+  margin-top: 7px;
+  color: #8995ad;
+  font-size: 12px;
+}
+
+.review-form-actions,
+.review-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 17px;
+}
+
+.review-submit-button,
+.review-cancel-button,
+.review-edit-button,
+.review-delete-button {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.review-cancel-button {
+  background: #29334a;
+}
+
+.review-cancel-button:hover {
+  background: #3a4660;
+}
+
+.review-delete-button {
+  background: #382333;
+  color: #fda4af;
+}
+
+.review-delete-button:hover {
+  background: #51283a;
+}
+
+.review-edit-button {
+  background: #30304f;
+}
+
+.review-edit-button:hover {
+  background: #45416e;
+}
+
+.review-submit-button:disabled,
+.review-cancel-button:disabled,
+.review-edit-button:disabled,
+.review-delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.review-feedback {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.review-feedback-error {
+  color: #fca5a5;
+}
+
+.review-feedback-success {
+  color: #86efac;
+}
+
+.review-existing-message {
+  padding: 15px 17px;
+  border: 1px solid #30394f;
+  border-radius: 10px;
+  background: #171f31;
+  color: #aab3ca;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.review-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 155px;
+  padding: 25px;
+  border: 1px dashed #35415b;
+  border-radius: 12px;
+  background: #171f31;
+  color: #aab3ca;
+  text-align: center;
+  font-size: 14px;
+}
+
+.review-empty-state strong {
+  color: #e2e8f0;
+  font-size: 16px;
+}
+
+.review-empty-state p {
+  color: #8995ad;
+  line-height: 1.6;
+}
+
+.review-empty-icon {
+  color: #a78bfa;
+  font-size: 27px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-card {
+  padding: 22px 0;
+  border-bottom: 1px solid #30394f;
+}
+
+.review-card:first-child {
+  padding-top: 0;
+}
+
+.review-card:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.review-user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6579ff, #8b5cf6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.review-date {
+  color: #8995ad;
+  font-size: 12px;
+}
+
+.review-card-stars {
+  margin-top: 13px;
+  font-size: 17px;
+}
+
+.review-card-content {
+  margin-top: 10px;
+  color: #c4ccdc;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.review-card-actions {
+  margin-top: 15px;
+}
+
+@media (max-width: 800px) {
+  .game-review-section {
+    padding: 23px;
+  }
+
+  .rating-summary-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rating-summary-note {
+    max-width: none;
+    padding: 15px 0 0;
+    border-top: 1px solid #30394f;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-review-section {
+    padding: 19px;
+    margin-top: 20px;
+    border-radius: 14px;
+  }
+
+  .game-rating-summary {
+    margin-top: 35px;
+  }
+
+  .game-review-heading h2 {
+    font-size: 20px;
+  }
+
+  .rating-summary-content {
+    padding: 18px;
+  }
+
+  .rating-average-number {
+    font-size: 34px;
+  }
+
+  .review-star-button {
+    font-size: 29px;
+  }
+
+  .review-card-header {
+    align-items: flex-start;
+  }
+}
+
+
+/* ===== Review Delete Confirmation Modal ===== */
+
+.review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 10, 22, 0.78);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.review-delete-modal {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  padding: 32px;
+  border: 1px solid #30394f;
+  border-radius: 18px;
+  background: #171f31;
+  color: #f1f5f9;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: reviewModalAppear 0.2s ease-out;
+}
+
+@keyframes reviewModalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.review-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #aab3ca;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.review-modal-close:hover {
+  background: #252e42;
+  color: #ffffff;
+}
+
+.review-modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  font-size: 32px;
+}
+
+.review-delete-modal h2 {
+  margin: 0 0 12px;
+  color: #f1f5f9;
+  font-size: 21px;
+}
+
+.review-modal-description {
+  margin: 0 0 10px;
+  color: #e2e8f0;
+  font-size: 15px;
+}
+
+.review-modal-warning {
+  margin: 0;
+  color: #aab3ca;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.review-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.review-modal-actions button {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.review-modal-cancel {
+  background: #30394f;
+  color: #e2e8f0;
+}
+
+.review-modal-cancel:hover {
+  background: #3b4760;
+}
+
+.review-modal-confirm {
+  background: #dc4444;
+  color: #ffffff;
+}
+
+.review-modal-confirm:hover {
+  background: #ef4444;
+}
+
+.review-modal-actions button:disabled,
+.review-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .review-delete-modal {
+    padding: 26px 20px;
+  }
+
+  .review-modal-actions {
+    flex-direction: column-reverse;
+  }
+}
