@@ -1,6 +1,8 @@
 
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
+import RatingStars from "../components/RatingStars";
+import ReviewCard from "../components/ReviewCard";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -403,25 +405,9 @@ function GameDetail() {
     }
   }
 
-  // แสดงดาว โดยแยกสีดาวที่เลือกและยังไม่เลือก
-  function renderStars(value) {
-    const score = Math.max(0, Math.min(5, Number(value) || 0));
-
-    return (
-      <span className="review-stars" aria-label={`${score} จาก 5 ดาว`}>
-        <span className="review-stars-filled">
-          {"★".repeat(score)}
-        </span>
-        <span className="review-stars-empty">
-          {"★".repeat(5 - score)}
-        </span>
-      </span>
-    );
-  }
-
   if (loading) {
     return (
-      <main className="detail-page">
+      <main className="min-h-screen bg-[#0b0e17] px-[7%] py-[45px] text-white max-[800px]:px-[5%] max-[800px]:py-[30px]">
         <p>กำลังโหลดข้อมูลเกม...</p>
       </main>
     );
@@ -429,9 +415,12 @@ function GameDetail() {
 
   if (error || !game) {
     return (
-      <main className="detail-page">
+      <main className="min-h-screen bg-[#0b0e17] px-[7%] py-[45px] text-white max-[800px]:px-[5%] max-[800px]:py-[30px]">
         <h2>{error || "ไม่พบข้อมูลเกม"}</h2>
-        <Link to="/games" className="detail-back">
+        <Link
+          to="/games"
+          className="inline-flex items-center gap-[10px] mb-[35px] text-[#aab3ca] no-underline text-sm transition-colors duration-300 hover:text-[#a78bfa]"
+        >
           ← กลับไปหน้าเกมทั้งหมด
         </Link>
       </main>
@@ -439,41 +428,55 @@ function GameDetail() {
   }
 
   return (
-    <main className="detail-page">
-      <Link to="/games" className="detail-back">
+    <main className="min-h-screen bg-[#0b0e17] px-[7%] py-[45px] text-white max-[800px]:px-[5%] max-[800px]:py-[30px]">
+      <Link
+        to="/games"
+        className="inline-flex items-center gap-[10px] mb-[35px] text-[#aab3ca] no-underline text-sm transition-colors duration-300 hover:text-[#a78bfa]"
+      >
         ← กลับไปหน้าเกมทั้งหมด
       </Link>
 
       {/* รายละเอียดเกมเดิม */}
-      <section className="detail-container">
-        <div className="detail-image-wrapper">
+      <section className="grid grid-cols-[1.15fr_1fr] items-center gap-[55px] max-w-[1250px] mx-auto p-[35px] bg-[#121827] border border-[#252e42] rounded-[18px] max-[800px]:grid-cols-1 max-[800px]:gap-[25px] max-[800px]:p-5">
+        <div className="w-full overflow-hidden rounded-[14px] bg-[#171d2b]">
           <img
             src={game.image}
             alt={game.name}
-            className="detail-image"
+            className="block w-full aspect-video object-cover transition-transform duration-[400ms] hover:scale-[1.04]"
           />
         </div>
 
-        <div className="detail-content">
-          <span className="detail-label">GAME DETAILS</span>
+        <div className="p-[15px_10px] max-[800px]:p-[5px]">
+          <span className="inline-block text-[#a78bfa] text-xs font-bold tracking-[3px] mb-[18px]">
+            GAME DETAILS
+          </span>
 
-          <h1>{game.name}</h1>
+          <h1 className="text-[clamp(30px,4vw,46px)] leading-[1.2] font-bold mt-0 mb-[22px]">
+            {game.name}
+          </h1>
 
-          <div className="detail-tags">
-            <span>{game.genre}</span>
-            <span>Released {game.year}</span>
+          <div className="flex flex-wrap gap-[10px]">
+            <span className="px-[15px] py-[9px] rounded-[7px] bg-[#222b40] text-[#c4b5fd] text-[13px]">
+              {game.genre}
+            </span>
+            <span className="px-[15px] py-[9px] rounded-[7px] bg-[#222b40] text-[#c4b5fd] text-[13px]">
+              Released {game.year}
+            </span>
           </div>
 
-          <div className="detail-divider"></div>
+          <div className="h-px bg-[#30394f] my-[30px]"></div>
 
-          <h3>เกี่ยวกับเกมนี้</h3>
+          <h3 className="text-[19px] mb-[14px]">
+            เกี่ยวกับเกมนี้
+          </h3>
 
-          <p className="detail-description">
+          <p className="text-[#aab3ca] text-[15px] leading-[1.9] mb-[30px]">
             {game.description}
           </p>
 
           <button
-            className="wishlist-button"
+            type="button"
+            className="inline-block px-[22px] py-[13px] mr-3 mb-3 bg-[#252b3d] text-white border border-[#7c3aed] rounded-lg text-sm font-semibold cursor-pointer transition duration-300 hover:bg-[#7c3aed] hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={toggleWishlist}
             disabled={wishlistLoading}
           >
@@ -490,90 +493,114 @@ function GameDetail() {
             </p>
           )}
 
-          <Link to="/games" className="detail-button">
+          <Link
+            to="/games"
+            className="inline-block px-[22px] py-[13px] bg-[#7c3aed] text-white rounded-lg no-underline text-sm font-semibold transition duration-300 hover:bg-[#6d28d9] hover:-translate-y-0.5"
+          >
             สำรวจเกมอื่น ๆ →
           </Link>
         </div>
       </section>
 
       {/* คะแนนเฉลี่ยของเกม */}
-      <section className="game-review-section game-rating-summary">
-        <div className="game-review-heading">
-          <span className="detail-label">PLAYER FEEDBACK</span>
-          <h2>คะแนนและรีวิวเกม</h2>
-          <p>ความคิดเห็นและคะแนนจากผู้เล่น GameHub</p>
+      <section className="w-full max-w-[1000px] mx-auto mt-[50px] p-[30px] bg-[#121827] border border-[#252e42] rounded-[18px] shadow-[0_12px_35px_#00000024] max-[800px]:p-[23px] max-[600px]:mt-[35px] max-[600px]:p-[19px] max-[600px]:rounded-[14px]">
+        <div className="mb-6">
+          <span className="inline-block text-[#a78bfa] text-xs font-bold tracking-[3px] mb-[9px]">
+            PLAYER FEEDBACK
+          </span>
+          <h2 className="text-white text-[23px] font-bold mt-0 mb-2 max-[600px]:text-xl">
+            คะแนนและรีวิวเกม
+          </h2>
+          <p className="text-[#aab3ca] text-sm leading-[1.7]">
+            ความคิดเห็นและคะแนนจากผู้เล่น GameHub
+          </p>
         </div>
 
-        <div className="rating-summary-content">
-          <div className="rating-summary-score">
-            <span className="rating-summary-label">คะแนนเฉลี่ย</span>
+        <div className="flex items-center justify-between gap-[25px] p-[22px_24px] bg-[#171f31] border border-[#30394f] rounded-[13px] max-[800px]:items-start max-[800px]:flex-col max-[600px]:p-[18px]">
+          <div className="min-w-0">
+            <span className="block mb-2 text-[#aab3ca] text-sm">
+              คะแนนเฉลี่ย
+            </span>
 
             {ratingSummary ? (
               <>
-                <p className="rating-average-number">
+                <p className="text-white text-[38px] leading-[1.2] font-extrabold mt-0 mb-[5px] max-[600px]:text-[34px]">
                   {Number(
                     ratingSummary.average_rating || 0
                   ).toFixed(2)} / 5
                 </p>
 
-                <p className="rating-average-stars">
-                  {renderStars(
-                    Math.round(Number(ratingSummary.average_rating || 0))
-                  )}
+                <p className="my-[5px] mb-2 text-[21px]">
+                  <RatingStars
+                    value={Math.round(
+                      Number(ratingSummary.average_rating || 0)
+                    )}
+                  />
                 </p>
 
-                <p className="rating-summary-count">
+                <p className="text-[#aab3ca] text-[13px] m-0">
                   ผู้ให้คะแนน {ratingSummary.total_ratings || 0} คน
                   {" · "}
                   รีวิว {ratingSummary.total_reviews || 0} รายการ
                 </p>
               </>
             ) : (
-              <p className="rating-summary-count">
+              <p className="text-[#aab3ca] text-[13px]">
                 กำลังโหลดคะแนน...
               </p>
             )}
           </div>
 
-          <div className="rating-summary-note">
-            <span className="rating-summary-note-icon">★</span>
-            <p>คะแนนเฉลี่ยจะคำนวณจากคะแนนรีวิวที่ผู้เล่นส่งเข้ามา</p>
+          <div className="flex items-center gap-[13px] max-w-[310px] pl-[22px] border-l border-[#30394f] max-[800px]:max-w-none max-[800px]:pl-0 max-[800px]:pt-[15px] max-[800px]:border-l-0 max-[800px]:border-t">
+            <span className="text-[#a78bfa] text-[27px]">★</span>
+            <p className="text-[#aab3ca] text-[13px] leading-[1.7]">
+              คะแนนเฉลี่ยจะคำนวณจากคะแนนรีวิวที่ผู้เล่นส่งเข้ามา
+            </p>
           </div>
         </div>
       </section>
 
       {/* เขียนรีวิว */}
-      <section className="game-review-section game-review-form-section">
-        <div className="game-review-heading">
-          <span className="detail-label">SHARE YOUR THOUGHTS</span>
-          <h2>
+      <section className="w-full max-w-[1000px] mx-auto mt-[28px] p-[30px] bg-[#121827] border border-[#252e42] rounded-[18px] shadow-[0_12px_35px_#00000024] max-[800px]:p-[23px] max-[600px]:mt-5 max-[600px]:p-[19px] max-[600px]:rounded-[14px]">
+        <div className="mb-6">
+          <span className="inline-block text-[#a78bfa] text-xs font-bold tracking-[3px] mb-[9px]">
+            SHARE YOUR THOUGHTS
+          </span>
+          <h2 className="text-white text-[23px] font-bold mt-0 mb-2 max-[600px]:text-xl">
             {editingReview !== null
               ? "แก้ไขรีวิวของคุณ"
               : myReview
                 ? "คุณเขียนรีวิวเกมนี้แล้ว"
                 : "เขียนรีวิวเกมนี้"}
           </h2>
-          <p>บอกเล่าประสบการณ์และความประทับใจที่มีต่อเกมนี้</p>
+          <p className="text-[#aab3ca] text-sm leading-[1.7]">
+            บอกเล่าประสบการณ์และความประทับใจที่มีต่อเกมนี้
+          </p>
         </div>
 
         {myReview && editingReview === null ? (
-          <p className="review-existing-message">
+          <p className="p-[15px_17px] border border-[#30394f] rounded-[10px] bg-[#171f31] text-[#aab3ca] text-sm leading-[1.7]">
             คุณสามารถแก้ไขหรือลบรีวิวเดิมของคุณได้จากรายการรีวิวด้านล่าง
           </p>
         ) : (
-          <form onSubmit={submitReview}>
-            <label className="review-form-label">
+          <form
+            onSubmit={submitReview}
+            className="flex flex-col items-start"
+          >
+            <label className="block mt-1 mb-[10px] text-[#e2e8f0] text-sm font-semibold">
               คะแนนรีวิว
             </label>
 
-            <div className="review-star-picker">
+            <div className="flex items-center gap-[5px] mb-[22px]">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
                   onClick={() => setReviewRating(star)}
-                  className={`review-star-button ${
-                    star <= reviewRating ? "is-selected" : ""
+                  className={`p-[0_2px] border-0 bg-transparent text-[32px] leading-none cursor-pointer transition-[color,transform] duration-[180ms] hover:scale-[1.12] max-[600px]:text-[29px] ${
+                    star <= reviewRating
+                      ? "text-[#f5b301]"
+                      : "text-[#596174]"
                   }`}
                   aria-label={`ให้คะแนน ${star} ดาว`}
                   aria-pressed={star === reviewRating}
@@ -583,7 +610,7 @@ function GameDetail() {
               ))}
             </div>
 
-            <label className="review-form-label">
+            <label className="block mt-1 mb-[10px] text-[#e2e8f0] text-sm font-semibold">
               ข้อความรีวิว
             </label>
 
@@ -593,18 +620,18 @@ function GameDetail() {
               placeholder="แบ่งปันความคิดเห็นเกี่ยวกับเกมนี้..."
               maxLength={5000}
               rows={5}
-              className="review-textarea"
+              className="block w-full min-h-[135px] box-border p-[15px_16px] border border-[#30394f] rounded-[10px] outline-none resize-y bg-[#0f1626] text-white text-sm leading-[1.7] transition-[border-color,box-shadow] duration-200 placeholder:text-[#77839b] focus:border-[#8b5cf6] focus:shadow-[0_0_0_3px_#8b5cf622]"
               required
             />
 
-            <p className="review-character-count">
+            <p className="self-end mt-[7px] text-[#8995ad] text-xs">
               {reviewContent.length}/5000 ตัวอักษร
             </p>
 
-            <div className="review-form-actions">
+            <div className="flex flex-wrap items-center gap-[10px] mt-[17px]">
               <button
                 type="submit"
-                className="detail-button review-submit-button"
+                className="inline-block px-[22px] py-[13px] bg-[#7c3aed] text-white border-0 rounded-lg text-sm font-semibold cursor-pointer transition duration-300 hover:bg-[#6d28d9] hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
                 disabled={reviewLoading}
               >
                 {reviewLoading
@@ -617,7 +644,7 @@ function GameDetail() {
               {editingReview !== null && (
                 <button
                   type="button"
-                  className="detail-button review-cancel-button"
+                  className="inline-block px-[22px] py-[13px] bg-[#29334a] text-white border-0 rounded-lg text-sm font-semibold cursor-pointer transition duration-300 hover:bg-[#3a4660] hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
                   onClick={cancelEditReview}
                   disabled={reviewLoading}
                 >
@@ -629,96 +656,62 @@ function GameDetail() {
         )}
 
         {reviewError && (
-          <p className="review-feedback review-feedback-error">
+          <p className="mt-[14px] text-[13px] leading-[1.6] text-[#fca5a5]">
             {reviewError}
           </p>
         )}
 
         {reviewMessage && (
-          <p className="review-feedback review-feedback-success">
+          <p className="mt-[14px] text-[13px] leading-[1.6] text-[#86efac]">
             {reviewMessage}
           </p>
         )}
       </section>
 
       {/* รายการรีวิว */}
-      <section className="game-review-section game-review-list-section">
-        <div className="game-review-heading">
-          <span className="detail-label">COMMUNITY REVIEWS</span>
-          <h2>รีวิวจากผู้เล่น</h2>
-          <p>อ่านความคิดเห็นจากผู้เล่นคนอื่น ๆ</p>
+      <section className="w-full max-w-[1000px] mx-auto mt-[28px] p-[30px] bg-[#121827] border border-[#252e42] rounded-[18px] shadow-[0_12px_35px_#00000024] max-[800px]:p-[23px] max-[600px]:mt-5 max-[600px]:p-[19px] max-[600px]:rounded-[14px]">
+        <div className="mb-6">
+          <span className="inline-block text-[#a78bfa] text-xs font-bold tracking-[3px] mb-[9px]">
+            COMMUNITY REVIEWS
+          </span>
+          <h2 className="text-white text-[23px] font-bold mt-0 mb-2 max-[600px]:text-xl">
+            รีวิวจากผู้เล่น
+          </h2>
+          <p className="text-[#aab3ca] text-sm leading-[1.7]">
+            อ่านความคิดเห็นจากผู้เล่นคนอื่น ๆ
+          </p>
         </div>
 
         {reviewsLoading ? (
-          <p className="review-empty-state">กำลังโหลดรีวิว...</p>
+          <p className="flex flex-col items-center justify-center gap-[9px] min-h-[155px] p-[25px] border border-dashed border-[#35415b] rounded-xl bg-[#171f31] text-[#aab3ca] text-center text-sm">
+            กำลังโหลดรีวิว...
+          </p>
         ) : reviewsError ? (
-          <p className="review-feedback review-feedback-error">
+          <p className="mt-[14px] text-[13px] leading-[1.6] text-[#fca5a5]">
             {reviewsError}
           </p>
         ) : reviews.length === 0 ? (
-          <div className="review-empty-state">
-            <span className="review-empty-icon">✦</span>
-            <strong>ยังไม่มีรีวิวเกมนี้</strong>
-            <p>เป็นคนแรกที่แบ่งปันความคิดเห็นเกี่ยวกับเกมนี้ได้เลย!</p>
+          <div className="flex flex-col items-center justify-center gap-[9px] min-h-[155px] p-[25px] border border-dashed border-[#35415b] rounded-xl bg-[#171f31] text-[#aab3ca] text-center text-sm">
+            <span className="text-[#a78bfa] text-[27px]">✦</span>
+            <strong className="text-[#e2e8f0] text-base">
+              ยังไม่มีรีวิวเกมนี้
+            </strong>
+            <p className="text-[#8995ad] leading-[1.6]">
+              เป็นคนแรกที่แบ่งปันความคิดเห็นเกี่ยวกับเกมนี้ได้เลย!
+            </p>
           </div>
         ) : (
-          <div className="review-list">
-            {reviews.map((review) => {
-              const isMyReview =
-                currentUserId !== null &&
-                Number(review.user_id) === currentUserId;
-
-              return (
-                <article key={review.id} className="review-card">
-                  <div className="review-card-header">
-                    <div className="review-user">
-                      <span className="review-user-avatar">
-                        {(review.username || "U").charAt(0).toUpperCase()}
-                      </span>
-                      <strong>{review.username}</strong>
-                    </div>
-
-                    <span className="review-date">
-                      {review.created_at
-                        ? new Date(
-                            review.created_at
-                          ).toLocaleDateString("th-TH")
-                        : ""}
-                    </span>
-                  </div>
-
-                  <p className="review-card-stars">
-                    {renderStars(review.rating)}
-                  </p>
-
-                  <p className="review-card-content">
-                    {review.content}
-                  </p>
-
-                  {isMyReview && (
-                    <div className="review-card-actions">
-                      <button
-                        type="button"
-                        className="detail-button review-edit-button"
-                        onClick={() => startEditReview(review)}
-                        disabled={reviewLoading}
-                      >
-                        แก้ไขรีวิว
-                      </button>
-
-                      <button
-                        type="button"
-                        className="detail-button review-delete-button"
-                        onClick={() => openDeleteConfirm(review)}
-                        disabled={reviewLoading}
-                      >
-                        ลบรีวิว
-                      </button>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
+          <div className="flex flex-col">
+            {reviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                currentUserId={currentUserId}
+                reviewLoading={reviewLoading}
+                onEdit={startEditReview}
+                onDelete={openDeleteConfirm}
+              />
+            ))}
           </div>
         )}
       </section>
@@ -726,11 +719,11 @@ function GameDetail() {
       {/* กล่องยืนยันการลบรีวิว */}
       {deleteReviewTarget && (
         <div
-          className="review-modal-overlay"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-5 bg-[rgba(5,10,22,0.78)] backdrop-blur-[5px]"
           onClick={closeDeleteConfirm}
         >
           <div
-            className="review-delete-modal"
+            className="relative w-full max-w-[430px] p-8 border border-[#30394f] rounded-[18px] bg-[#171f31] text-[#f1f5f9] text-center shadow-[0_20px_60px_rgba(0,0,0,0.45)] max-[480px]:px-5 max-[480px]:py-[26px]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-review-title"
@@ -738,7 +731,7 @@ function GameDetail() {
           >
             <button
               type="button"
-              className="review-modal-close"
+              className="absolute top-3 right-[15px] w-8 h-8 border-0 rounded-lg bg-transparent text-[#aab3ca] text-[25px] cursor-pointer hover:bg-[#252e42] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
               onClick={closeDeleteConfirm}
               disabled={reviewLoading}
               aria-label="ปิดหน้าต่าง"
@@ -746,27 +739,30 @@ function GameDetail() {
               ×
             </button>
 
-            <div className="review-modal-icon">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-[18px] rounded-full bg-[rgba(239,68,68,0.12)] text-[#f87171] text-[32px]">
               <span>⌫</span>
             </div>
 
-            <h2 id="delete-review-title">
+            <h2
+              id="delete-review-title"
+              className="text-[#f1f5f9] text-[21px] font-bold mt-0 mb-3"
+            >
               ยืนยันการลบรีวิว
             </h2>
 
-            <p className="review-modal-description">
+            <p className="text-[#e2e8f0] text-[15px] mb-[10px]">
               คุณต้องการลบรีวิวนี้ใช่หรือไม่?
             </p>
 
-            <p className="review-modal-warning">
+            <p className="text-[#aab3ca] text-[13px] leading-[1.7]">
               เมื่อลบแล้ว รีวิวและคะแนนของคุณจะถูกนำออกจากระบบ
               และไม่สามารถกู้คืนได้
             </p>
 
-            <div className="review-modal-actions">
+            <div className="flex gap-3 mt-7 max-[480px]:flex-col-reverse">
               <button
                 type="button"
-                className="review-modal-cancel"
+                className="flex-1 min-h-11 px-4 py-[10px] border-0 rounded-[9px] bg-[#30394f] text-[#e2e8f0] text-sm font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#3b4760] disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={closeDeleteConfirm}
                 disabled={reviewLoading}
               >
@@ -775,7 +771,7 @@ function GameDetail() {
 
               <button
                 type="button"
-                className="review-modal-confirm"
+                className="flex-1 min-h-11 px-4 py-[10px] border-0 rounded-[9px] bg-[#dc4444] text-white text-sm font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#ef4444] disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={confirmDeleteReview}
                 disabled={reviewLoading}
               >

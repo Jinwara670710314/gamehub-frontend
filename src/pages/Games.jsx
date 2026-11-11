@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { getGames } from "../api/gameApi";
+import GameCard from "../components/GameCard";
 
 function Games() {
   const [games, setGames] = useState([]);
@@ -50,27 +50,38 @@ function Games() {
   });
 
   return (
-    <main className="featured games-page">
-      <div className="section-heading">
+    <main className="max-w-[1500px] mx-auto py-[65px] px-[7%] max-[1000px]:py-[55px] max-[1000px]:px-[6%] max-[600px]:py-[45px] max-[600px]:px-[5%]">
+      {/* Page Heading */}
+      <div className="flex justify-between items-end gap-5 mb-[25px] max-[600px]:flex-col max-[600px]:items-start">
         <div>
-          <span className="hero-tag">EXPLORE COLLECTION</span>
-          <h2>เกมทั้งหมด</h2>
+          <span className="text-[#a78bfa] text-[13px] font-bold tracking-[3px]">
+            EXPLORE COLLECTION
+          </span>
+
+          <h2 className="text-[30px] mt-3">
+            เกมทั้งหมด
+          </h2>
         </div>
 
-        <p>ค้นหาเกมที่คุณชื่นชอบ</p>
+        <p className="text-[#9ca7bd] text-[15px]">
+          ค้นหาเกมที่คุณชื่นชอบ
+        </p>
       </div>
 
-      <div className="games-toolbar">
+      {/* Search and Genre Filter */}
+      <div className="flex gap-4 mb-7 max-[600px]:flex-col">
         <input
           type="text"
           placeholder="ค้นหาชื่อเกม..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
+          className="flex-1 min-w-0 px-4 py-3 bg-[#171d2b] border border-[#2b3449] rounded-lg text-white outline-none focus:border-[#8b5cf6]"
         />
 
         <select
           value={selectedGenre}
           onChange={(event) => setSelectedGenre(event.target.value)}
+          className="min-w-[180px] px-4 py-3 bg-[#171d2b] border border-[#2b3449] rounded-lg text-white outline-none focus:border-[#8b5cf6]"
         >
           {genres.map((genre) => (
             <option value={genre} key={genre}>
@@ -80,43 +91,38 @@ function Games() {
         </select>
       </div>
 
-      {loading && <p>กำลังโหลดข้อมูลเกม...</p>}
+      {/* Loading */}
+      {loading && (
+        <p className="text-[#aab3ca]">
+          กำลังโหลดข้อมูลเกม...
+        </p>
+      )}
 
-      {error && <p className="no-games">{error}</p>}
+      {/* Error */}
+      {error && (
+        <p className="text-red-400">
+          {error}
+        </p>
+      )}
 
+      {/* Games List */}
       {!loading && !error && (
         <>
-          <p className="games-count">
+          <p className="text-[#aab3ca] text-sm mb-5">
             พบเกมทั้งหมด {filteredGames.length} เกม
           </p>
 
-          <div className="feature-grid">
+          <div className="grid grid-cols-4 gap-[22px] max-[1000px]:grid-cols-2 max-[600px]:grid-cols-1">
             {filteredGames.map((game) => (
-              <Link
-                to={`/games/${game.id}`}
-                className="feature-card"
+              <GameCard
                 key={game.id}
-                style={{
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                <img
-                  src={game.image}
-                  alt={game.name}
-                  className="game-image"
-                />
-
-                <div className="game-info">
-                  <h3>{game.name}</h3>
-                  <p>{game.genre} · {game.year}</p>
-                </div>
-              </Link>
+                game={game}
+              />
             ))}
           </div>
 
           {filteredGames.length === 0 && (
-            <p className="no-games">
+            <p className="text-[#aab3ca] text-center py-10">
               ไม่พบเกมที่ค้นหา ลองค้นหาด้วยคำอื่น
             </p>
           )}

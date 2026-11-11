@@ -109,86 +109,112 @@ function Wishlist() {
 
   if (loading) {
     return (
-      <main className="featured wishlist-page">
-        <p>กำลังโหลด Wishlist...</p>
+      <main className="max-w-[1500px] mx-auto py-[65px] px-[7%] max-[1000px]:py-[55px] max-[1000px]:px-[6%] max-[600px]:py-[45px] max-[600px]:px-[5%]">
+        <p className="text-[#aab3ca]">
+          กำลังโหลด Wishlist...
+        </p>
       </main>
     );
   }
 
   return (
-    <main className="featured wishlist-page">
-      <div className="section-heading">
+    <main className="max-w-[1500px] mx-auto py-[65px] px-[7%] max-[1000px]:py-[55px] max-[1000px]:px-[6%] max-[600px]:py-[45px] max-[600px]:px-[5%]">
+      <div className="flex justify-between items-end gap-5 mb-[25px] max-[600px]:flex-col max-[600px]:items-start">
         <div>
-          <span className="hero-tag">YOUR COLLECTION</span>
-          <h2>เกมโปรดของฉัน ♥</h2>
+          <span className="text-[#a78bfa] text-[13px] font-bold tracking-[3px]">
+            YOUR COLLECTION
+          </span>
+
+          <h2 className="text-[30px] mt-3 text-white">
+            เกมโปรดของฉัน ♥
+          </h2>
         </div>
 
-        <p>เกมที่คุณบันทึกไว้</p>
+        <p className="text-[#9ca7bd] text-[15px]">
+          เกมที่คุณบันทึกไว้
+        </p>
       </div>
 
       {!token ? (
-        <div className="wishlist-empty">
-          <h3>กรุณาเข้าสู่ระบบก่อนดู Wishlist</h3>
-          <p>เข้าสู่ระบบเพื่อดูเกมที่คุณบันทึกไว้</p>
+        <div className="bg-[#171d2b] border border-[#2b3449] rounded-xl text-center px-6 py-12">
+          <h3 className="text-white text-xl font-semibold mb-3">
+            กรุณาเข้าสู่ระบบก่อนดู Wishlist
+          </h3>
 
-          <Link to="/login" className="detail-button">
+          <p className="text-[#aab3ca] mb-6">
+            เข้าสู่ระบบเพื่อดูเกมที่คุณบันทึกไว้
+          </p>
+
+          <Link
+            to="/login"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#8b5cf6] border border-[#8b5cf6] text-white no-underline font-semibold transition-colors hover:bg-[#7c3aed]"
+          >
             เข้าสู่ระบบ →
           </Link>
         </div>
       ) : error ? (
-        <p
-          style={{
-            color: "#ef4444",
-            fontSize: "14px",
-            margin: "12px 0",
-          }}
-        >
+        <p className="text-red-400 text-sm my-3">
           {error}
         </p>
       ) : wishlist.length === 0 ? (
         <>
-          <p className="games-count">
+          <p className="text-[#aab3ca] text-sm mb-5">
             มีเกมใน Wishlist ทั้งหมด 0 เกม
           </p>
 
-          <div className="wishlist-empty">
-            <h3>ยังไม่มีเกมใน Wishlist</h3>
-            <p>ลองเลือกเกมที่คุณชื่นชอบแล้วเพิ่มไว้ที่นี่</p>
+          <div className="bg-[#171d2b] border border-[#2b3449] rounded-xl text-center px-6 py-12">
+            <h3 className="text-white text-xl font-semibold mb-3">
+              ยังไม่มีเกมใน Wishlist
+            </h3>
 
-            <Link to="/games" className="detail-button">
+            <p className="text-[#aab3ca] mb-6">
+              ลองเลือกเกมที่คุณชื่นชอบแล้วเพิ่มไว้ที่นี่
+            </p>
+
+            <Link
+              to="/games"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#8b5cf6] border border-[#8b5cf6] text-white no-underline font-semibold transition-colors hover:bg-[#7c3aed]"
+            >
               ไปเลือกเกม →
             </Link>
           </div>
         </>
       ) : (
         <>
-          <p className="games-count">
+          <p className="text-[#aab3ca] text-sm mb-5">
             มีเกมใน Wishlist ทั้งหมด {wishlist.length} เกม
           </p>
 
-          <div className="feature-grid">
+          <div className="grid grid-cols-4 gap-[22px] max-[1000px]:grid-cols-2 max-[600px]:grid-cols-1">
             {wishlist.map((game) => (
-              <div className="feature-card" key={game.id}>
+              <div
+                className="min-w-0 overflow-hidden bg-[#171d2b] border border-[#2b3449] rounded-xl"
+                key={game.id}
+              >
                 <Link
                   to={`/games/${game.game_id}`}
-                  className="wishlist-card-link"
+                  className="block no-underline text-inherit"
                 >
                   <img
                     src={game.image}
                     alt={game.name}
-                    className="game-image"
+                    className="block w-full aspect-video object-cover bg-[#20283a]"
                   />
 
-                  <div className="game-info">
-                    <h3>{game.name}</h3>
-                    <p>
+                  <div className="p-[18px]">
+                    <h3 className="text-white text-[17px] mb-[9px]">
+                      {game.name}
+                    </h3>
+
+                    <p className="text-[#aab3ca] text-[14px]">
                       {game.genre} · {game.year}
                     </p>
                   </div>
                 </Link>
 
                 <button
-                  className="wishlist-remove"
+                  type="button"
+                  className="w-full p-3 bg-[#252b3d] text-[#fca5a5] border-0 border-t border-[#30394f] cursor-pointer text-sm hover:bg-[#45212c] disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => removeGame(game.id)}
                   disabled={removingId === game.id}
                 >

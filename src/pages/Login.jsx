@@ -78,23 +78,33 @@ function Login() {
   };
 
   return (
-    <main className="register-page">
-      <section className="register-form-side">
-        <div className="register-form-container">
-          <Link to="/" className="register-logo">
+    <main className="min-h-[calc(100vh-75px)] grid grid-cols-2 bg-[#0b0e17] max-[850px]:grid-cols-1">
+      <section className="flex justify-center items-center py-[45px] px-[30px] max-[850px]:py-[40px] max-[850px]:px-[25px]">
+        <div className="w-full max-w-[420px]">
+          <Link
+            to="/"
+            className="inline-block text-white text-[23px] font-extrabold no-underline mb-[45px] max-[850px]:mb-[30px]"
+          >
             GAMEHUB
           </Link>
 
-          <span className="auth-label">WELCOME BACK</span>
+          <span className="block text-[#a78bfa] text-[11px] font-bold tracking-[3px] mb-3">
+            WELCOME BACK
+          </span>
 
-          <h1>Sign In</h1>
+          <h1 className="text-white text-[32px] font-bold mb-[10px]">
+            Sign In
+          </h1>
 
-          <p className="auth-description">
+          <p className="text-[#aab3ca] text-[14px] leading-[1.7] mb-7">
             Welcome back! Sign in to continue your gaming adventure.
           </p>
 
-          <form onSubmit={handleSubmit}>
-            <label>Email</label>
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <label className="text-[#e2e8f0] text-[13px] mb-2">
+              Email
+            </label>
+
             <input
               type="email"
               placeholder="Enter your email"
@@ -104,9 +114,13 @@ function Login() {
                 setError("");
               }}
               required
+              className="h-[46px] px-[14px] mb-[17px] bg-[#171d2b] border border-[#30394f] rounded-lg text-white text-[14px] outline-none focus:border-[#8b5cf6]"
             />
 
-            <label>Password</label>
+            <label className="text-[#e2e8f0] text-[13px] mb-2">
+              Password
+            </label>
+
             <input
               type="password"
               placeholder="Enter your password"
@@ -116,17 +130,11 @@ function Login() {
                 setError("");
               }}
               required
+              className="h-[46px] px-[14px] mb-[17px] bg-[#171d2b] border border-[#30394f] rounded-lg text-white text-[14px] outline-none focus:border-[#8b5cf6]"
             />
 
             {error && (
-              <p
-                style={{
-                  color: "#ef4444",
-                  fontSize: "13px",
-                  marginTop: "8px",
-                  marginBottom: "8px",
-                }}
-              >
+              <p className="text-[#ef4444] text-[13px] mt-2 mb-2">
                 {error}
               </p>
             )}
@@ -136,16 +144,21 @@ function Login() {
             </button>
           </form>
 
-          <p className="auth-footer">
+          <p className="text-[#aab3ca] text-center text-[13px] mt-6">
             Don't have an account?{" "}
-            <Link to="/register">Create account</Link>
+            <Link
+              to="/register"
+              className="text-[#a78bfa] no-underline font-semibold"
+            >
+              Create account
+            </Link>
           </p>
         </div>
       </section>
 
-      <section className="register-image-side">
+      <section className="relative min-h-[700px] overflow-hidden max-[850px]:min-h-[350px] max-[850px]:row-start-1">
         <video
-          className="register-background-video"
+          className="absolute inset-0 w-full h-full object-cover object-[center_5%]"
           autoPlay
           muted
           loop
@@ -158,16 +171,20 @@ function Login() {
           />
         </video>
 
-        <div className="register-image-overlay"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(5,8,18,0.95),rgba(5,8,18,0.15))]"></div>
 
-        <div className="register-image-text">
-          <span>YOUR NEXT ADVENTURE STARTS HERE</span>
-          <h2>
+        <div className="absolute bottom-[70px] left-[50px] right-[35px] text-white max-[850px]:left-[30px] max-[850px]:bottom-[30px]">
+          <span className="text-[#c4b5fd] text-[11px] font-bold tracking-[3px]">
+            YOUR NEXT ADVENTURE STARTS HERE
+          </span>
+
+          <h2 className="text-[clamp(30px,4vw,48px)] leading-[1.15] font-bold my-[18px]">
             WELCOME BACK
             <br />
             TO GAMEHUB.
           </h2>
-          <p>
+
+          <p className="text-[#d1d5db] text-[14px] leading-[1.8] max-w-[400px]">
             Your favorite games are waiting.
             Continue your adventure with GameHub.
           </p>

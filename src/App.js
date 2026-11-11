@@ -9,15 +9,15 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 
-import Admin from "./pages/Admin";
-import AdminGames from "./pages/AdminGames";
-import AdminAddGame from "./pages/AdminAddGame";
-import AdminEditGame from "./pages/AdminEditGame";
-import AdminMembers from "./pages/AdminMembers";
+import Admin from "./pages/admin/Admin";
+import AdminGames from "./pages/admin/AdminGames";
+import AdminAddGame from "./pages/admin/AdminAddGame";
+import AdminEditGame from "./pages/admin/AdminEditGame";
+import AdminMembers from "./pages/admin/AdminMembers";
 
 import Navbar from "./components/Navbar";
 
-import "./App.css";
+//import "./App.css";
 
 // ตรวจสอบสิทธิ์ก่อนเข้าใช้งานหน้า Admin
 function AdminRoute({ children }) {
