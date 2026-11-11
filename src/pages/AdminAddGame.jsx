@@ -1,6 +1,32 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import games from "../data/games";
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+// อ่านผลลัพธ์จาก Backend
+async function readResponse(response) {
+  const responseText = await response.text();
+
+  let result;
+
+  try {
+    result = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    result = {
+      message: responseText,
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ Backend"
+    );
+  }
+
+  return result;
+}
 
 function AdminAddGame() {
   const navigate = useNavigate();
@@ -11,31 +37,85 @@ function AdminAddGame() {
   const [image, setImage] = useState("");
   const [description, setDescription] = useState("");
 
-  function handleSubmit(e) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [notification, setNotification] = useState("");
+
+  // เพิ่มเกมใหม่ลงฐานข้อมูล
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const newGame = {
-      id: Math.max(...games.map((game) => game.id), 0) + 1,
-      name,
-      genre,
-      year: Number(year),
-      image,
-      description,
-    };
+    try {
+      setSaving(true);
+      setError("");
 
-    games.push(newGame);
+      const token = localStorage.getItem("token");
 
-    alert("เพิ่มเกมเรียบร้อยแล้ว!");
-    navigate("/admin/games");
+      if (!token) {
+        throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/games`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            genre: genre.trim(),
+            year: Number(year),
+            image: image.trim(),
+            description: description.trim(),
+          }),
+        }
+      );
+
+      await readResponse(response);
+
+      setNotification("Game added successfully!");
+
+      setTimeout(() => {
+        navigate("/admin/games");
+      }, 1500);
+
+    } catch (err) {
+      setError(err.message || "ไม่สามารถเพิ่มเกมได้");
+      setSaving(false);
+    }
   }
 
   return (
     <main className="add-game-page">
       <div className="add-game-container">
 
+        {notification && (
+          <div
+            role="status"
+            style={{
+              position: "fixed",
+              top: "24px",
+              right: "24px",
+              zIndex: 9999,
+              background: "#166534",
+              color: "#ffffff",
+              padding: "16px 24px",
+              borderRadius: "10px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+              fontWeight: "600",
+            }}
+          >
+            ✓ {notification}
+          </div>
+        )}
+
         <div className="add-game-header">
           <div>
-            <span className="add-game-label">GAMEHUB MANAGEMENT</span>
+            <span className="add-game-label">
+              GAMEHUB MANAGEMENT
+            </span>
             <h1>Add New Game</h1>
             <p>เพิ่มเกมใหม่เข้าสู่คลังเกมของ GameHub</p>
           </div>
@@ -47,7 +127,10 @@ function AdminAddGame() {
 
         <div className="add-game-layout">
 
-          <form className="add-game-form" onSubmit={handleSubmit}>
+          <form
+            className="add-game-form"
+            onSubmit={handleSubmit}
+          >
             <div className="add-game-section-title">
               <h2>Game Information</h2>
               <p>กรอกข้อมูลเกมที่ต้องการเพิ่ม</p>
@@ -109,12 +192,25 @@ function AdminAddGame() {
               />
             </div>
 
+            {error && (
+              <p role="alert" style={{ color: "#ef4444" }}>
+                {error}
+              </p>
+            )}
+
             <div className="add-game-actions">
-              <button type="submit" className="add-game-submit">
-                + Add Game
+              <button
+                type="submit"
+                className="add-game-submit"
+                disabled={saving}
+              >
+                {saving ? "Adding..." : "+ Add Game"}
               </button>
 
-              <Link to="/admin/games" className="add-game-cancel">
+              <Link
+                to="/admin/games"
+                className="add-game-cancel"
+              >
                 Cancel
               </Link>
             </div>
@@ -128,7 +224,13 @@ function AdminAddGame() {
 
             <div className="add-game-preview-card">
               {image ? (
-                <img src={image} alt="Game Preview" />
+                <img
+                  src={image}
+                  alt="Game Preview"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
               ) : (
                 <div className="add-game-image-placeholder">
                   <span>🎮</span>

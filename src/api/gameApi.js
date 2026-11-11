@@ -2,11 +2,9 @@
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
 
-// ดึงรายการเกมจาก Backend
-export async function getGames(limit = 8) {
-  const response = await fetch(
-    `${API_BASE_URL}/api/games?limit=${limit}`
-  );
+// ดึงรายการเกมทั้งหมดจาก Backend
+export async function getGames() {
+  const response = await fetch(`${API_BASE_URL}/api/games`);
 
   if (!response.ok) {
     throw new Error("ไม่สามารถโหลดข้อมูลเกมได้");

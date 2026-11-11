@@ -1,26 +1,108 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import games from "../data/games";
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+// อ่านผลลัพธ์จาก Backend ทั้งกรณี JSON และข้อความ Error
+async function readResponse(response) {
+  const responseText = await response.text();
+
+  let result;
+
+  try {
+    result = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    result = {
+      message: responseText,
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ Backend"
+    );
+  }
+
+  return result;
+}
 
 function AdminGames() {
-  const [allGames, setAllGames] = useState(
-    games.map((game) => ({
-      ...game,
-      isDeleted: game.isDeleted || false,
-    }))
-  );
-
+  const [allGames, setAllGames] = useState([]);
   const [search, setSearch] = useState("");
   const [showDeleted, setShowDeleted] = useState(false);
 
-  const activeGames = allGames.filter((game) => !game.isDeleted);
-  const deletedGames = allGames.filter((game) => game.isDeleted);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [actionLoading, setActionLoading] = useState(null);
+
+  // โหลดเกมทั้งหมดจาก Backend
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchAdminGames = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        }
+
+        const response = await fetch(
+          `${API_BASE_URL}/api/admin/games`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const result = await readResponse(response);
+
+        if (!Array.isArray(result.data)) {
+          throw new Error("รูปแบบข้อมูลเกมจาก Backend ไม่ถูกต้อง");
+        }
+
+        if (isMounted) {
+          setAllGames(result.data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message || "ไม่สามารถโหลดข้อมูลเกมได้");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchAdminGames();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const activeGames = allGames.filter(
+    (game) => !game.isDeleted
+  );
+
+  const deletedGames = allGames.filter(
+    (game) => game.isDeleted
+  );
 
   const filteredGames = allGames.filter((game) => {
-    const matchesSearch = game.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    const gameName = (game.name || "").toLowerCase();
+
+    const matchesSearch = gameName.includes(
+      search.toLowerCase()
+    );
 
     const matchesStatus = showDeleted
       ? game.isDeleted
@@ -29,30 +111,86 @@ function AdminGames() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleDelete = (id, name) => {
+  // ลบเกมในฐานข้อมูล
+  const handleDelete = async (id, name) => {
     const confirmed = window.confirm(
       `คุณต้องการลบเกม ${name} ใช่หรือไม่?`
     );
 
     if (!confirmed) return;
 
-    setAllGames((previousGames) =>
-      previousGames.map((game) =>
-        game.id === id
-          ? { ...game, isDeleted: true }
-          : game
-      )
-    );
+    try {
+      setActionLoading(id);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/games/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await readResponse(response);
+
+      setAllGames((previousGames) =>
+        previousGames.map((game) =>
+          game.id === id
+            ? { ...game, isDeleted: true }
+            : game
+        )
+      );
+    } catch (err) {
+      setError(err.message || "ไม่สามารถลบเกมได้");
+    } finally {
+      setActionLoading(null);
+    }
   };
 
-  const handleRestore = (id) => {
-    setAllGames((previousGames) =>
-      previousGames.map((game) =>
-        game.id === id
-          ? { ...game, isDeleted: false }
-          : game
-      )
-    );
+  // กู้คืนเกมในฐานข้อมูล
+  const handleRestore = async (id) => {
+    try {
+      setActionLoading(id);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/games/${id}/restore`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await readResponse(response);
+
+      setAllGames((previousGames) =>
+        previousGames.map((game) =>
+          game.id === id
+            ? { ...game, isDeleted: false }
+            : game
+        )
+      );
+    } catch (err) {
+      setError(err.message || "ไม่สามารถกู้คืนเกมได้");
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   return (
@@ -138,12 +276,31 @@ function AdminGames() {
           </button>
         </div>
 
-        {filteredGames.length > 0 ? (
+        {error && (
+          <p role="alert" style={{ color: "#ef4444", margin: "12px 0" }}>
+            {error}
+          </p>
+        )}
+
+        {loading ? (
+          <div className="manage-empty">
+            <span>🎮</span>
+            <h3>Loading Games...</h3>
+            <p>กำลังโหลดข้อมูลเกมจากฐานข้อมูล</p>
+          </div>
+        ) : filteredGames.length > 0 ? (
           <div className="manage-game-grid">
             {filteredGames.map((game) => (
               <div className="manage-game-card" key={game.id}>
                 <div className="manage-game-image">
-                  <img src={game.image} alt={game.name} />
+                  <img
+                    src={game.image || "/game-placeholder.png"}
+                    alt={game.name || "Game"}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/game-placeholder.png";
+                    }}
+                  />
 
                   <span className="manage-game-number">
                     GAME #{game.id}
@@ -152,19 +309,26 @@ function AdminGames() {
 
                 <div className="manage-game-details">
                   <div className="manage-game-meta">
-                    <span>{game.genre}</span>
-                    <span>{game.year}</span>
+                    <span>{game.genre || "-"}</span>
+                    <span>{game.year ?? "-"}</span>
                   </div>
 
                   <h3>{game.name}</h3>
+
+                  <p className="manage-game-description">
+                    {game.description || "ยังไม่มีรายละเอียดเกม"}
+                  </p>
 
                   <div className="manage-game-actions">
                     {game.isDeleted ? (
                       <button
                         className="manage-restore-btn"
                         onClick={() => handleRestore(game.id)}
+                        disabled={actionLoading === game.id}
                       >
-                        ↶ Restore
+                        {actionLoading === game.id
+                          ? "Processing..."
+                          : "↶ Restore"}
                       </button>
                     ) : (
                       <>
@@ -180,8 +344,11 @@ function AdminGames() {
                           onClick={() =>
                             handleDelete(game.id, game.name)
                           }
+                          disabled={actionLoading === game.id}
                         >
-                          Delete
+                          {actionLoading === game.id
+                            ? "Processing..."
+                            : "Delete"}
                         </button>
                       </>
                     )}
@@ -194,7 +361,11 @@ function AdminGames() {
           <div className="manage-empty">
             <span>🎮</span>
             <h3>No Games Found</h3>
-            <p>ไม่พบเกมในรายการนี้</p>
+            <p>
+              {error
+                ? "ไม่สามารถแสดงข้อมูลเกมได้"
+                : "ไม่พบเกมในรายการนี้"}
+            </p>
           </div>
         )}
 
