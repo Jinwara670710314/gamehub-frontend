@@ -4,7 +4,7 @@ const API_BASE_URL =
 
 // ดึงรายการเกมทั้งหมดจาก Backend
 export async function getGames() {
-  const response = await fetch(`${API_BASE_URL}/api/games`);
+  const response = await fetch(`${API_BASE_URL}/api/games?limit=100`);
 
   if (!response.ok) {
     throw new Error("ไม่สามารถโหลดข้อมูลเกมได้");

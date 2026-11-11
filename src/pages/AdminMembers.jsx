@@ -1,66 +1,122 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const initialMembers = [
-  {
-    id: 1,
-    username: "gameplayer01",
-    email: "player01@example.com",
-    role: "Member",
-    status: "Active",
-  },
-  {
-    id: 2,
-    username: "gamer_pro",
-    email: "gamer@example.com",
-    role: "Member",
-    status: "Active",
-  },
-  {
-    id: 3,
-    username: "admin",
-    email: "admin@gamehub.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: 4,
-    username: "player99",
-    email: "player99@example.com",
-    role: "Member",
-    status: "Suspended",
-  },
-];
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function AdminMembers() {
-  const [members, setMembers] = useState(initialMembers);
+  const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [savingId, setSavingId] = useState(null);
 
+  // ดึงรายชื่อสมาชิกจริงจาก Backend
+  const fetchMembers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/admin/members`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          response.status === 403
+            ? "คุณไม่มีสิทธิ์เข้าถึงข้อมูลสมาชิก"
+            : "ไม่สามารถโหลดข้อมูลสมาชิกได้"
+        );
+      }
+
+      const result = await response.json();
+
+      setMembers(result.data || []);
+    } catch (err) {
+      setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  // ค้นหาสมาชิก
   const filteredMembers = members.filter((member) =>
     `${member.username} ${member.email}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
+  // นับจำนวนสมาชิกที่ Active
   const activeCount = members.filter(
-    (member) => member.status === "Active"
+    (member) => member.status === "active"
   ).length;
 
-  const handleStatus = (id) => {
-    setMembers((previousMembers) =>
-      previousMembers.map((member) =>
-        member.id === id
-          ? {
-              ...member,
-              status:
-                member.status === "Active"
-                  ? "Suspended"
-                  : "Active",
-            }
-          : member
-      )
-    );
+  const suspendedCount = members.length - activeCount;
+
+  // เปลี่ยนสถานะสมาชิกในฐานข้อมูล
+  const handleStatus = async (id, currentStatus) => {
+    try {
+      setSavingId(id);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+      }
+
+      const newStatus =
+        currentStatus === "active" ? "suspended" : "active";
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/admin/members/${id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "ไม่สามารถเปลี่ยนสถานะสมาชิกได้");
+      }
+
+      const result = await response.json();
+
+      // อัปเดตข้อมูลบนหน้าจอจากผลลัพธ์ Backend
+      setMembers((previousMembers) =>
+        previousMembers.map((member) =>
+          member.id === id ? result.data : member
+        )
+      );
+    } catch (err) {
+      setError(err.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ");
+    } finally {
+      setSavingId(null);
+    }
   };
 
   return (
@@ -94,7 +150,7 @@ function AdminMembers() {
 
           <div className="members-stat-card">
             <span>SUSPENDED</span>
-            <h2>{members.length - activeCount}</h2>
+            <h2>{suspendedCount}</h2>
             <p>บัญชีที่ถูกระงับ</p>
           </div>
         </div>
@@ -113,6 +169,12 @@ function AdminMembers() {
           />
         </div>
 
+        {error && (
+          <p role="alert" className="members-empty">
+            {error}
+          </p>
+        )}
+
         <div className="members-table-wrapper">
           <table className="members-table">
             <thead>
@@ -126,46 +188,65 @@ function AdminMembers() {
             </thead>
 
             <tbody>
-              {filteredMembers.map((member) => (
-                <tr key={member.id}>
-                  <td>
-                    <div className="member-name">
-                      <div className="member-avatar">
-                        {member.username.charAt(0).toUpperCase()}
-                      </div>
-                      {member.username}
-                    </div>
-                  </td>
-
-                  <td>{member.email}</td>
-
-                  <td>
-                    <span className={`member-role ${member.role.toLowerCase()}`}>
-                      {member.role}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span className={`member-status ${member.status.toLowerCase()}`}>
-                      {member.status}
-                    </span>
-                  </td>
-
-                  <td>
-                    <button
-                      className="member-action-btn"
-                      disabled={member.role === "Admin"}
-                      onClick={() => handleStatus(member.id)}
-                    >
-                      {member.status === "Active"
-                        ? "Suspend"
-                        : "Activate"}
-                    </button>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="members-empty">
+                    กำลังโหลดข้อมูลสมาชิก...
                   </td>
                 </tr>
-              ))}
+              ) : filteredMembers.length > 0 ? (
+                filteredMembers.map((member) => (
+                  <tr key={member.id}>
+                    <td>
+                      <div className="member-name">
+                        <div className="member-avatar">
+                          {member.username.charAt(0).toUpperCase()}
+                        </div>
+                        {member.username}
+                      </div>
+                    </td>
 
-              {filteredMembers.length === 0 && (
+                    <td>{member.email}</td>
+
+                    <td>
+                      <span
+                        className={`member-role ${member.role.toLowerCase()}`}
+                      >
+                        {member.role === "admin" ? "Admin" : "Member"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        className={`member-status ${member.status.toLowerCase()}`}
+                      >
+                        {member.status === "active"
+                          ? "Active"
+                          : "Suspended"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <button
+                        className="member-action-btn"
+                        disabled={
+                          member.role === "admin" ||
+                          savingId === member.id
+                        }
+                        onClick={() =>
+                          handleStatus(member.id, member.status)
+                        }
+                      >
+                        {savingId === member.id
+                          ? "Saving..."
+                          : member.status === "active"
+                          ? "Suspend"
+                          : "Activate"}
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan="5" className="members-empty">
                     ไม่พบสมาชิกที่ค้นหา

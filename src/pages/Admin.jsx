@@ -1,7 +1,110 @@
 
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+// อ่านข้อมูลจาก Backend
+async function readResponse(response) {
+  const responseText = await response.text();
+
+  let result;
+
+  try {
+    result = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    result = {
+      message: responseText,
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "เกิดข้อผิดพลาดในการเชื่อมต่อ Backend"
+    );
+  }
+
+  return result;
+}
+
 function Admin() {
+  const [totalGames, setTotalGames] = useState(null);
+  const [totalMembers, setTotalMembers] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // โหลดจำนวนเกมและสมาชิกจาก Backend
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchStatistics = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
+        }
+
+        // เรียก API เกมและสมาชิกพร้อมกัน
+        const [gamesResponse, membersResponse] =
+          await Promise.all([
+            fetch(`${API_BASE_URL}/api/games?limit=100`),
+
+            fetch(`${API_BASE_URL}/api/admin/members`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
+
+        const [gamesResult, membersResult] =
+          await Promise.all([
+            readResponse(gamesResponse),
+            readResponse(membersResponse),
+          ]);
+
+        if (!Array.isArray(gamesResult.data)) {
+          throw new Error("รูปแบบข้อมูลเกมไม่ถูกต้อง");
+        }
+
+        if (!Array.isArray(membersResult.data)) {
+          throw new Error("รูปแบบข้อมูลสมาชิกไม่ถูกต้อง");
+        }
+
+        if (isMounted) {
+          setTotalGames(
+            gamesResult.total ?? gamesResult.data.length
+          );
+
+          setTotalMembers(
+            membersResult.count ?? membersResult.data.length
+          );
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(
+            err.message || "ไม่สามารถโหลดข้อมูลสถิติได้"
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchStatistics();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <main className="admin-page">
       <div className="admin-container">
@@ -36,18 +139,28 @@ function Admin() {
           <div className="admin-stat-card">
             <div className="admin-stat-icon">🎮</div>
             <span>Total Games</span>
-            <h2>100</h2>
+            <h2>
+              {loading ? "..." : totalGames ?? "-"}
+            </h2>
             <p>จำนวนเกมทั้งหมดในระบบ</p>
           </div>
 
           <div className="admin-stat-card">
             <div className="admin-stat-icon">👥</div>
             <span>Total Members</span>
-            <h2>250</h2>
+            <h2>
+              {loading ? "..." : totalMembers ?? "-"}
+            </h2>
             <p>จำนวนสมาชิกที่ลงทะเบียน</p>
           </div>
 
         </section>
+
+        {error && (
+          <p role="alert" style={{ color: "#ef4444", margin: "12px 0" }}>
+            {error}
+          </p>
+        )}
 
         {/* Management */}
         <section className="admin-management">
