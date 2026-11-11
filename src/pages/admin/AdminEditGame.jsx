@@ -120,7 +120,7 @@ function AdminEditGame() {
             year: Number(year),
             image: image.trim(),
             description: description.trim(),
-            rawg_id: game.rawg_id ?? null,
+            igdb_id: game.igdb_id ?? null,
           }),
         }
       );
