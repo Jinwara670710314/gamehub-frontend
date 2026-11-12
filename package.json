@@ -1,3 +1,4 @@
+
 {
   "name": "gamehub-frontend",
   "version": "0.1.0",
@@ -38,6 +39,8 @@
     ]
   },
   "devDependencies": {
+    "autoprefixer": "^10.6.2",
+    "postcss": "^8.5.32",
     "tailwindcss": "^3.4.19"
   }
 }
