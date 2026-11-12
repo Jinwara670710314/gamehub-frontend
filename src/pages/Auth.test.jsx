@@ -2,6 +2,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router-dom";
+
+import { AuthProvider } from "../auth/AuthContext";
 import Login from "./Login";
 import Register from "./Register";
 
@@ -12,10 +14,12 @@ function LocationDisplay() {
 
 function renderWithRouter(component) {
   return render(
-    <MemoryRouter initialEntries={["/"]}>
-      {component}
-      <LocationDisplay />
-    </MemoryRouter>
+    <AuthProvider>
+      <MemoryRouter initialEntries={["/"]}>
+        {component}
+        <LocationDisplay />
+      </MemoryRouter>
+    </AuthProvider>
   );
 }
 
@@ -41,17 +45,17 @@ describe("Authentication Tests", () => {
 
     renderWithRouter(<Login />);
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your email"),
       "test@example.com"
     );
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your password"),
       "password123"
     );
 
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole("button", { name: "Sign In" })
     );
 
@@ -82,17 +86,17 @@ describe("Authentication Tests", () => {
 
     renderWithRouter(<Login />);
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your email"),
       "wrong@example.com"
     );
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your password"),
       "wrongpassword"
     );
 
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole("button", { name: "Sign In" })
     );
 
@@ -114,27 +118,27 @@ describe("Authentication Tests", () => {
 
     renderWithRouter(<Register />);
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your username"),
       "newmember"
     );
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Enter your email"),
       "newmember@example.com"
     );
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Create a password"),
       "password123"
     );
 
-    userEvent.type(
+    await userEvent.type(
       screen.getByPlaceholderText("Confirm your password"),
       "password123"
     );
 
-    userEvent.click(
+    await userEvent.click(
       screen.getByRole("button", { name: "Create Account" })
     );
 

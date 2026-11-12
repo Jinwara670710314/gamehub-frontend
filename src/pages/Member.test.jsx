@@ -1,8 +1,9 @@
 
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
+import { AuthProvider } from "../auth/AuthContext";
 import Wishlist from "./Wishlist";
 import GameDetail from "./GameDetail";
 
@@ -39,8 +40,16 @@ function setupMember() {
   localStorage.setItem("user", JSON.stringify({ id: 1 }));
 }
 
-function renderGameDetail() {
+function renderWithProviders(ui) {
   return render(
+    <AuthProvider>
+      {ui}
+    </AuthProvider>
+  );
+}
+
+function renderGameDetail() {
+  return renderWithProviders(
     <MemoryRouter initialEntries={["/games/1"]}>
       <Routes>
         <Route path="/games/:id" element={<GameDetail />} />
@@ -122,7 +131,7 @@ describe("Member Tests", () => {
       })
     );
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <Wishlist />
       </MemoryRouter>
@@ -160,7 +169,7 @@ describe("Member Tests", () => {
         mockResponse({ message: "ลบเกมสำเร็จ" })
       );
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <Wishlist />
       </MemoryRouter>

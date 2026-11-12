@@ -3,16 +3,19 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RequireRole from "./RequireRole";
+import { AuthProvider } from "../auth/AuthContext";
 
 function renderWithRouter(initialPath, component) {
   return render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path="/login" element={<div>Login Page</div>} />
-        <Route path="/profile" element={component} />
-        <Route path="/admin" element={component} />
-      </Routes>
-    </MemoryRouter>
+    <AuthProvider>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route path="/login" element={<div>Login Page</div>} />
+          <Route path="/profile" element={component} />
+          <Route path="/admin" element={component} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>
   );
 }
 

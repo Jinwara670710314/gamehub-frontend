@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 
+import { AuthProvider } from "../../auth/AuthContext";
 import AdminAddGame from "./AdminAddGame";
 import AdminGames from "./AdminGames";
 
@@ -21,6 +22,14 @@ function setupAdmin() {
   );
 }
 
+function renderWithProviders(ui) {
+  return render(
+    <AuthProvider>
+      {ui}
+    </AuthProvider>
+  );
+}
+
 describe("Admin Tests", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -36,7 +45,7 @@ describe("Admin Tests", () => {
       })
     );
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <AdminAddGame />
       </MemoryRouter>
@@ -98,9 +107,7 @@ describe("Admin Tests", () => {
     });
 
     expect(
-      await screen.findByText(
-        /Game added successfully!/
-      )
+      await screen.findByText(/Game added successfully!/)
     ).toBeInTheDocument();
   });
 
@@ -129,7 +136,7 @@ describe("Admin Tests", () => {
         })
       );
 
-    render(
+    renderWithProviders(
       <MemoryRouter>
         <AdminGames />
       </MemoryRouter>
