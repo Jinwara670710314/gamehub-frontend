@@ -1,0 +1,25 @@
+
+{
+  "name": "GameHub (React + Mock Backend)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-24-bookworm",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000, 4000],
+  "portsAttributes": {
+    "3000": {
+      "label": "React dev server",
+      "onAutoForward": "openBrowser"
+    },
+    "4000": {
+      "label": "Mock Backend"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets"
+      ]
+    }
+  }
+}
