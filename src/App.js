@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Games from "./pages/Games";
@@ -8,6 +8,7 @@ import Wishlist from "./pages/Wishlist";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 import Admin from "./pages/admin/Admin";
 import AdminGames from "./pages/admin/AdminGames";
@@ -16,27 +17,8 @@ import AdminEditGame from "./pages/admin/AdminEditGame";
 import AdminMembers from "./pages/admin/AdminMembers";
 
 import Navbar from "./components/Navbar";
-
-//import "./App.css";
-
-// ตรวจสอบสิทธิ์ก่อนเข้าใช้งานหน้า Admin
-function AdminRoute({ children }) {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-
-  // ยังไม่ได้เข้าสู่ระบบ
-  if (!token || !user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // เข้าสู่ระบบแล้ว แต่ไม่ใช่ Admin
-  if (user.role !== "admin") {
-    return <Navigate to="/" replace />;
-  }
-
-  // เป็น Admin สามารถเข้าใช้งานได้
-  return children;
-}
+import ProtectedRoute from "./components/ProtectedRoute";
+import RequireRole from "./components/RequireRole";
 
 function App() {
   return (
@@ -48,56 +30,72 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/games" element={<Games />} />
         <Route path="/games/:id" element={<GameDetail />} />
-        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
+
+        {/* Member Pages */}
+        <Route
+          path="/wishlist"
+          element={<Wishlist />}
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin Pages */}
         <Route
           path="/admin"
           element={
-            <AdminRoute>
+            <RequireRole role="admin">
               <Admin />
-            </AdminRoute>
+            </RequireRole>
           }
         />
 
         <Route
           path="/admin/games"
           element={
-            <AdminRoute>
+            <RequireRole role="admin">
               <AdminGames />
-            </AdminRoute>
+            </RequireRole>
           }
         />
 
         <Route
           path="/admin/games/new"
           element={
-            <AdminRoute>
+            <RequireRole role="admin">
               <AdminAddGame />
-            </AdminRoute>
+            </RequireRole>
           }
         />
 
         <Route
           path="/admin/games/edit/:id"
           element={
-            <AdminRoute>
+            <RequireRole role="admin">
               <AdminEditGame />
-            </AdminRoute>
+            </RequireRole>
           }
         />
 
         <Route
           path="/admin/members"
           element={
-            <AdminRoute>
+            <RequireRole role="admin">
               <AdminMembers />
-            </AdminRoute>
+            </RequireRole>
           }
         />
+
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
