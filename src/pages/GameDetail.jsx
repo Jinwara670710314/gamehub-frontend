@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import RatingStars from "../components/RatingStars";
 import ReviewCard from "../components/ReviewCard";
+import { useAuth } from "../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -29,6 +30,10 @@ async function requestJSON(url, options = {}) {
 
 function GameDetail() {
   const { id } = useParams();
+  const { token, user } = useAuth();
+
+  // ข้อมูลสมาชิกที่เข้าสู่ระบบ
+  const currentUserId = user?.id ? Number(user.id) : null;
 
   // รายละเอียดเกม
   const [game, setGame] = useState(null);
@@ -42,16 +47,6 @@ function GameDetail() {
 
   const isFavorite =
     libraryEntry?.status === "want_to_play";
-
-  // ข้อมูลสมาชิกที่เข้าสู่ระบบ
-  const [currentUserId] = useState(() => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      return user?.id ? Number(user.id) : null;
-    } catch {
-      return null;
-    }
-  });
 
   // Rating และ Review
   const [ratingSummary, setRatingSummary] = useState(null);
@@ -109,8 +104,6 @@ function GameDetail() {
       try {
         setLibraryEntry(null);
 
-        const token = localStorage.getItem("token");
-
         if (!token) return;
 
         const result = await requestJSON(
@@ -135,7 +128,7 @@ function GameDetail() {
     }
 
     loadWishlistStatus();
-  }, [id]);
+  }, [id, token]);
 
   // โหลดคะแนนเฉลี่ย
   const loadRatingSummary = useCallback(async () => {
@@ -180,8 +173,6 @@ function GameDetail() {
     if (!game || wishlistLoading) return;
 
     setWishlistError("");
-
-    const token = localStorage.getItem("token");
 
     if (!token) {
       setWishlistError(
@@ -259,8 +250,6 @@ function GameDetail() {
   // ส่งรีวิวใหม่หรือแก้ไขรีวิวเดิม
   async function submitReview(e) {
     e.preventDefault();
-
-    const token = localStorage.getItem("token");
 
     setReviewError("");
     setReviewMessage("");
@@ -358,8 +347,6 @@ function GameDetail() {
   // ยืนยันการลบรีวิว
   async function confirmDeleteReview() {
     if (!deleteReviewTarget || reviewLoading) return;
-
-    const token = localStorage.getItem("token");
 
     if (!token) {
       setReviewError("กรุณาเข้าสู่ระบบก่อน");

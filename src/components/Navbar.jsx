@@ -1,34 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user") || "null");
-    } catch {
-      return null;
-    }
-  });
-
-  // ตรวจสอบสถานะ Login เมื่อเปลี่ยนหน้า
-  useEffect(() => {
-    try {
-      setUser(JSON.parse(localStorage.getItem("user") || "null"));
-    } catch {
-      setUser(null);
-    }
-  }, [location.pathname]);
+  const { user, logout } = useAuth();
 
   // ออกจากระบบ
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setUser(null);
+    logout();
     navigate("/login");
   };
 

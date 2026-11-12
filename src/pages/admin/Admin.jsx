@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -29,6 +30,8 @@ async function readResponse(response) {
 }
 
 function Admin() {
+  const { token } = useAuth();
+
   const [totalGames, setTotalGames] = useState(null);
   const [totalMembers, setTotalMembers] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,8 +45,6 @@ function Admin() {
       try {
         setLoading(true);
         setError("");
-
-        const token = localStorage.getItem("token");
 
         if (!token) {
           throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
@@ -103,10 +104,11 @@ function Admin() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [token]);
 
   return (
-    <main className="min-h-screen bg-[#151b2e] text-white px-[8%] py-[60px] max-[650px]:px-[5%] max-[650px]:py-[40px]">
+    //<main className="min-h-screen bg-[#151b2e] text-white px-[8%] py-[60px] max-[650px]:px-[5%] max-[650px]:py-[40px]">
+    <main className="min-h-screen bg-[radial-gradient(ellipse_at_85%_5%,rgba(124,58,237,0.13),transparent_35%),#09090f] text-white px-[8%] py-[60px] max-[650px]:px-[5%] max-[650px]:py-[40px]">
       <div className="max-w-[1150px] mx-auto">
 
         {/* Dashboard Header */}

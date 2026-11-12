@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,19 +55,13 @@ function Login() {
         throw new Error("ไม่พบ Token จากระบบ กรุณาลองใหม่");
       }
 
-      // บันทึก Token สำหรับเรียก API ที่ต้องเข้าสู่ระบบ
-      localStorage.setItem("token", result.token);
-
-      // บันทึกข้อมูลผู้ใช้
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: result.id,
-          username: result.username,
-          email: result.email,
-          role: result.role,
-        })
-      );
+      // บันทึกข้อมูลเข้าสู่ระบบผ่าน AuthContext
+      login(result.token, {
+        id: result.id,
+        username: result.username,
+        email: result.email,
+        role: result.role,
+      });
 
       // เข้าสู่ระบบสำเร็จ กลับไปหน้าแรก
       navigate("/");

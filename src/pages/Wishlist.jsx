@@ -1,17 +1,18 @@
 
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function Wishlist() {
+  const { token } = useAuth();
+
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [removingId, setRemovingId] = useState(null);
-
-  const token = localStorage.getItem("token");
 
   const loadWishlist = useCallback(async () => {
     if (!token) {

@@ -1,14 +1,14 @@
 
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 // ตรวจสอบสิทธิ์ตามบทบาทของผู้ใช้
 function RequireRole({ role, children }) {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
   // ยังไม่ได้เข้าสู่ระบบ
-  if (!token || !user) {
+  if (!isAuthenticated) {
     return (
       <Navigate
         to="/login"

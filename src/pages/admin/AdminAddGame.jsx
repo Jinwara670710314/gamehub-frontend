@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -30,6 +31,7 @@ async function readResponse(response) {
 
 function AdminAddGame() {
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   const [name, setName] = useState("");
   const [genre, setGenre] = useState("");
@@ -48,8 +50,6 @@ function AdminAddGame() {
     try {
       setSaving(true);
       setError("");
-
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");

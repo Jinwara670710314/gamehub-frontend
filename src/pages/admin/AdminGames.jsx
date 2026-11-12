@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -29,6 +30,8 @@ async function readResponse(response) {
 }
 
 function AdminGames() {
+  const { token } = useAuth();
+
   const [allGames, setAllGames] = useState([]);
   const [search, setSearch] = useState("");
   const [showDeleted, setShowDeleted] = useState(false);
@@ -48,8 +51,6 @@ function AdminGames() {
       try {
         setLoading(true);
         setError("");
-
-        const token = localStorage.getItem("token");
 
         if (!token) {
           throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
@@ -90,7 +91,7 @@ function AdminGames() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [token]);
 
   const activeGames = allGames.filter(
     (game) => !game.isDeleted
@@ -125,8 +126,6 @@ function AdminGames() {
     try {
       setActionLoading(id);
       setError("");
-
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");
@@ -165,8 +164,6 @@ function AdminGames() {
     try {
       setActionLoading(id);
       setError("");
-
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("กรุณาเข้าสู่ระบบก่อนใช้งาน");

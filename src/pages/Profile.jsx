@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
@@ -27,6 +28,8 @@ async function readResponse(response) {
 }
 
 function Profile() {
+  const { token, updateUser } = useAuth();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -51,8 +54,6 @@ function Profile() {
       try {
         setLoading(true);
         setError("");
-
-        const token = localStorage.getItem("token");
 
         if (!token) {
           throw new Error("กรุณาเข้าสู่ระบบก่อน");
@@ -79,7 +80,7 @@ function Profile() {
     }
 
     loadProfile();
-  }, []);
+  }, [token]);
 
   // แก้ไขข้อมูลโปรไฟล์
   const handleUpdateProfile = async (e) => {
@@ -90,8 +91,6 @@ function Profile() {
 
     try {
       setSavingProfile(true);
-
-      const token = localStorage.getItem("token");
 
       const response = await fetch(`${API_BASE_URL}/api/me`, {
         method: "PUT",
@@ -109,16 +108,13 @@ function Profile() {
 
       setUser(result);
 
-      // อัปเดตข้อมูลผู้ใช้ใน localStorage
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: result.id,
-          username: result.username,
-          email: result.email,
-          role: result.role,
-        })
-      );
+      // อัปเดตข้อมูลผู้ใช้ใน AuthContext
+      updateUser({
+        id: result.id,
+        username: result.username,
+        email: result.email,
+        role: result.role,
+      });
 
       setUsername(result.username);
       setEmail(result.email);
@@ -157,8 +153,6 @@ function Profile() {
 
     try {
       setSavingPassword(true);
-
-      const token = localStorage.getItem("token");
 
       const response = await fetch(
         `${API_BASE_URL}/api/change-password`,

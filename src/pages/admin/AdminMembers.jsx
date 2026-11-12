@@ -1,11 +1,14 @@
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 function AdminMembers() {
+  const { token } = useAuth();
+
   const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -13,12 +16,10 @@ function AdminMembers() {
   const [savingId, setSavingId] = useState(null);
 
   // ดึงรายชื่อสมาชิกจริงจาก Backend
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
-
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");
@@ -50,11 +51,11 @@ function AdminMembers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchMembers();
-  }, []);
+  }, [fetchMembers]);
 
   // ค้นหาสมาชิก
   const filteredMembers = members.filter((member) =>
@@ -75,8 +76,6 @@ function AdminMembers() {
     try {
       setSavingId(id);
       setError("");
-
-      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("กรุณาเข้าสู่ระบบใหม่อีกครั้ง");

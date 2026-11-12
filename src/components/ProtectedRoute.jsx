@@ -1,14 +1,14 @@
 
 import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 // ตรวจสอบว่าผู้ใช้เข้าสู่ระบบแล้วหรือยัง
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   // ยังไม่ได้เข้าสู่ระบบ ให้ไปหน้า Login
-  if (!token || !user) {
+  if (!isAuthenticated) {
     return (
       <Navigate
         to="/login"
