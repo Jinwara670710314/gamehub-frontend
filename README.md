@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# 🎮 GameHub
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**GameHub** คือเว็บแอปพลิเคชันสำหรับค้นหาและจัดการคลังเกม ผู้ใช้สามารถเลือกดูรายละเอียดเกม ค้นหาเกมที่สนใจ และจัดการรายการเกมส่วนตัวได้ โดยแบ่งสิทธิ์การใช้งานออกเป็น Guest, Member และ Admin
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+### Guest
+- ดูรายการเกมทั้งหมด
+- ค้นหาเกม
+- ดูรายละเอียดเกม
+- สมัครสมาชิกและเข้าสู่ระบบ
 
-### `npm start`
+### Member
+- ใช้งานฟังก์ชันของ Guest ได้ทั้งหมด
+- จัดการข้อมูลโปรไฟล์
+- เปลี่ยนรหัสผ่าน
+- เพิ่มเกมลงใน Wishlist
+- จัดการสถานะเกมในคลังส่วนตัว
+- ให้คะแนนและเขียนรีวิวเกม
+- แก้ไขและลบรีวิวของตนเอง
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Admin
+- จัดการข้อมูลเกม เพิ่ม แก้ไข และลบเกม
+- กู้คืนเกมที่ถูกลบ
+- ดูรายการสมาชิก
+- จัดการสถานะบัญชีสมาชิก
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Technologies
 
-### `npm test`
+### Frontend
+- React 19
+- React Router DOM 6
+- Tailwind CSS 3
+- JavaScript
+- HTML / CSS
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend
+- Go (Golang)
+- REST API
+- JWT Authentication
+- bcrypt
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Database
+- PostgreSQL
+- Supabase
 
 ### Deployment
+- Frontend: Vercel
+- Backend: Render
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📁 Project Structure
 
-### `npm run build` fails to minify
+```text
+gamehub-frontend/
+├── public/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── data/
+│   ├── App.js
+│   └── index.js
+├── docs/
+│   ├── api.md
+│   └── db-schema.md
+├── package.json
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🚀 Getting Started
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/Jinwara670710314/gamehub-frontend.git
+```
+
+เข้าไปยังโฟลเดอร์โปรเจกต์
+
+```bash
+cd gamehub-frontend
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+สร้างไฟล์ `.env` ในโฟลเดอร์หลักของ Frontend และกำหนด URL ของ Backend
+
+```env
+REACT_APP_API_URL=http://localhost:8080
+```
+
+หากใช้งาน Backend ที่ Deploy บน Render ให้เปลี่ยนค่าเป็น URL ของ Backend ที่ใช้งานจริง
+
+### 4. Run Frontend
+
+```bash
+npm start
+```
+
+เปิดเว็บไซต์ผ่าน
+
+```text
+http://localhost:3000
+```
+
+**หมายเหตุ:** การใช้งานระบบที่เชื่อมต่อข้อมูลจริงจำเป็นต้องเปิด Backend และตั้งค่าการเชื่อมต่อฐานข้อมูลให้เรียบร้อยก่อน
+
+## 🔗 Backend Repository
+
+[GameHub Backend](https://github.com/Jinwara670710314/gamehub-backend)
+
+Backend พัฒนาด้วย Go ทำหน้าที่จัดการ API การยืนยันตัวตน การจัดการเกม สมาชิก คลังเกม รีวิว และคะแนน โดยเชื่อมต่อกับฐานข้อมูล PostgreSQL บน Supabase
+
+## 📚 Documentation
+
+เอกสารประกอบการพัฒนาโปรเจกต์
+
+- **API Documentation:** [`docs/api.md`](docs/api.md) — รายละเอียด API endpoints และการรับส่งข้อมูลระหว่าง Frontend กับ Backend
+- **Database Schema:** [`docs/db-schema.md`](docs/db-schema.md) — โครงสร้างฐานข้อมูล ตาราง และความสัมพันธ์ของข้อมูล
+
+## ☁️ Deployment
+
+โปรเจกต์แบ่งการ Deploy ออกเป็น 2 ส่วน
+
+- **Frontend:** Deploy บน Vercel
+- **Backend:** Deploy บน Render และเชื่อมต่อฐานข้อมูล PostgreSQL บน Supabase
+
+สำหรับการใช้งานบน Production ต้องกำหนด Environment Variables ให้ตรงกับระบบที่ Deploy และอนุญาต Frontend URL ในการตั้งค่า CORS ของ Backend
+
+---
+
+**GameHub — Your Game Collection, All in One Place.** 🎮

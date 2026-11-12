@@ -1,2 +1,0 @@
-# gamehub-frontend
-GameHub Frontend
