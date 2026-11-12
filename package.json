@@ -8,6 +8,8 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^13.5.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^6.30.6",
@@ -18,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "mock": "node mock/server.js"
   },
   "eslintConfig": {
     "extends": [
@@ -42,5 +45,8 @@
     "autoprefixer": "^10.6.2",
     "postcss": "^8.5.32",
     "tailwindcss": "^3.4.19"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
