@@ -80,7 +80,7 @@ function Home() {
             </span>
 
             <h2 className="text-[30px] mt-3">
-              เกมยอดนิยม
+              Popular Games
             </h2>
           </div>
 

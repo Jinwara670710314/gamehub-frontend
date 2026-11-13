@@ -59,7 +59,7 @@ function Games() {
           </span>
 
           <h2 className="text-[30px] mt-3">
-            เกมทั้งหมด
+            All Games
           </h2>
         </div>
 
@@ -85,7 +85,7 @@ function Games() {
         >
           {genres.map((genre) => (
             <option value={genre} key={genre}>
-              {genre === "ทั้งหมด" ? "ทุกประเภท" : genre}
+              {genre === "ทั้งหมด" ? "All Genres" : genre}
             </option>
           ))}
         </select>

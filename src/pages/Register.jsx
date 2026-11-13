@@ -86,7 +86,7 @@ function Register() {
           </h1>
 
           <p className="text-[#aab3ca] text-[14px] leading-[1.7] mb-7">
-            Create your account and start exploring your next adventure.
+            สมัครสมาชิกเพื่อค้นพบเกมใหม่ ๆ และออกผจญภัยไปกับ GameHub
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col">
@@ -200,8 +200,7 @@ function Register() {
           </h2>
 
           <p className="text-[#d1d5db] text-[14px] leading-[1.8] max-w-[400px]">
-            Discover new worlds. Find your favorite games.
-            Build your own collection.
+            ค้นพบโลกใหม่ ๆ ค้นหาเกมโปรด และสร้างคลังเกมในแบบของคุณ
           </p>
         </div>
       </section>

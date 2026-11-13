@@ -92,8 +92,8 @@ function Login() {
             Sign In
           </h1>
 
-          <p className="text-[#aab3ca] text-[14px] leading-[1.7] mb-7">
-            Welcome back! Sign in to continue your gaming adventure.
+          <p className="text-[#aab3ca] text-[14px] leading-[1.7] mb-7 whitespace-nowrap">
+           ยินดีต้อนรับกลับมา! เข้าสู่ระบบเพื่อออกผจญภัยในโลกของเกมอีกครั้ง
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col">
@@ -181,8 +181,7 @@ function Login() {
           </h2>
 
           <p className="text-[#d1d5db] text-[14px] leading-[1.8] max-w-[400px]">
-            Your favorite games are waiting.
-            Continue your adventure with GameHub.
+            เกมโปรดของคุณกำลังรออยู่ กลับมาออกผจญภัยต่อได้ที่ GameHub
           </p>
         </div>
       </section>

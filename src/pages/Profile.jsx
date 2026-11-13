@@ -233,7 +233,7 @@ function Profile() {
           </h1>
 
           <p className="text-[#9ca7bd] text-[15px]">
-            Manage your account and gaming collection.
+            จัดการบัญชีผู้ใช้และคลังเกมของคุณ
           </p>
         </div>
 

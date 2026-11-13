@@ -127,7 +127,7 @@ function Wishlist() {
           </span>
 
           <h2 className="text-[30px] mt-3 text-white">
-            เกมโปรดของฉัน ♥
+            My Wishlist ♥
           </h2>
         </div>
 

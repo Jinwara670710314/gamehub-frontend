@@ -26,11 +26,11 @@ function Navbar() {
 
       <div className="flex items-center gap-8 max-[600px]:w-full max-[600px]:gap-[18px] max-[600px]:flex-wrap">
         <Link to="/" className={linkStyle}>
-          หน้าแรก
+          Home
         </Link>
 
         <Link to="/games" className={linkStyle}>
-          เกมทั้งหมด
+          Games
         </Link>
 
         <Link to="/wishlist" className={linkStyle}>
@@ -52,11 +52,11 @@ function Navbar() {
         {!user ? (
           <>
             <Link to="/login" className={linkStyle}>
-              เข้าสู่ระบบ
+              Login
             </Link>
 
             <Link to="/register" className={linkStyle}>
-              สมัครสมาชิก
+              Register
             </Link>
           </>
         ) : (
@@ -65,7 +65,7 @@ function Navbar() {
             onClick={handleLogout}
             className="bg-transparent border-0 text-[#b7bfd1] text-[15px] font-[inherit] cursor-pointer p-0 transition-colors duration-200 hover:text-[#a78bfa]"
           >
-            ออกจากระบบ
+            Logout
           </button>
         )}
       </div>
